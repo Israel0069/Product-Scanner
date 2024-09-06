@@ -120,10 +120,12 @@
 
     <script type="text/javascript">
         let totalPrice = 0;
+        let isProcessing = false; // Variable to control scan delay
 
         function onScanSuccess(qrCodeMessage) {
-            // Parse the QR code message, expecting the following structure:
-            // {"product_id":1,"product_name":"MaisBerna","price":"10","category":"corn","description":"asad","stock_quantity":"100"}
+            if (isProcessing) return; // Ignore scans during the delay
+            isProcessing = true;
+
             try {
                 const qrData = JSON.parse(qrCodeMessage);
                 const { product_name, price } = qrData;
@@ -132,9 +134,18 @@
                 document.getElementById('result').innerHTML = `
                     <span class="result">Product: ${product_name}<br>Price: ₱${parseFloat(price).toFixed(2)}</span>`;
                 document.getElementById('total-price').innerText = `₱${totalPrice.toFixed(2)}`;
+
+                // Voice feedback
+                speak(`Scanned product: ${product_name}, Price: ₱${price}`);
+
             } catch (error) {
                 document.getElementById('result').innerHTML = `<span class="result">Invalid QR Code Data</span>`;
             }
+
+            // 3-second delay
+            setTimeout(() => {
+                isProcessing = false;
+            }, 3000);
         }
 
         function onScanError(errorMessage) {
@@ -164,6 +175,14 @@
             window.print();
             document.body.innerHTML = originalContents;
             location.reload();
+        }
+
+        // Function for voice feedback
+        function speak(message) {
+            const speech = new SpeechSynthesisUtterance(message);
+            speech.lang = 'en-US'; // Set language to English
+            speech.rate = 1; // Normal speaking rate
+            window.speechSynthesis.speak(speech);
         }
     </script>
 </body>
