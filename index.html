@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Scanner / Reader</title>
+    <script src="html5-qrcode.min.js"></script>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background: rgba(128, 0, 0, 0.66);
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 20px 25px rgba(0, 0, 0, 0.25);
+            max-width: 700px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .container h1 {
+            color: #333333;
+            margin-bottom: 20px;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .col {
+            width: 100%;
+            max-width: 48%;
+            padding: 10px;
+        }
+
+        #my-qr-reader {
+            padding: 20px;
+            border: 1.5px solid #b2b2b2;
+            border-radius: 8px;
+        }
+
+        #result {
+            font-size: 18px;
+            color: #333;
+            background-color: #e7e7e7;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .result {
+            background-color: green;
+            color: #fff;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            outline: none;
+            border-radius: 4px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #008000ad;
+            transition: 0.3s background-color;
+            margin: 5px;
+        }
+
+        button:hover {
+            background-color: #008000;
+        }
+
+        video {
+            width: 100%;
+            border-radius: 8px;
+            border: 1.5px solid #b2b2b2;
+        }
+
+        @media (max-width: 600px) {
+            .col {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>QR Code Scanner / Reader</h1>
+        <div class="row">
+            <div class="col">
+                <div id="my-qr-reader"></div>
+            </div>
+            <div class="col">
+                <h4>SCAN RESULT</h4>
+                <div id="result">Result Here</div>
+                <button onclick="copyToClipboard()">Copy to Clipboard</button>
+                <button onclick="printResult()">Print Result</button>
+                <h4>Total Price</h4>
+                <div id="total-price">0.00</div>
+            </div>
+        </div>
+        <button onclick="location.reload();">Reset</button>
+    </div>
+
+    <script type="text/javascript">
+        let totalPrice = 0;
+
+        function onScanSuccess(qrCodeMessage) {
+            // Assume QR code contains product_name, store_name, and price in JSON format
+            try {
+                const qrData = JSON.parse(qrCodeMessage);
+                const { product_name, store_name, price } = qrData;
+
+                totalPrice += parseFloat(price);
+                document.getElementById('result').innerHTML = `
+                    <span class="result">Product: ${product_name}<br>Store: ${store_name}<br>Price: ₱${price.toFixed(2)}</span>`;
+                document.getElementById('total-price').innerText = `₱${totalPrice.toFixed(2)}`;
+            } catch (error) {
+                document.getElementById('result').innerHTML = `<span class="result">Invalid QR Code Data</span>`;
+            }
+        }
+
+        function onScanError(errorMessage) {
+            // Handle scan error
+        }
+
+        var html5QrcodeScanner = new Html5QrcodeScanner(
+            "my-qr-reader", { fps: 10, qrbox: 250 }
+        );
+        html5QrcodeScanner.render(onScanSuccess, onScanError);
+
+        function copyToClipboard() {
+            const resultText = document.getElementById('result').innerText;
+            const tempInput = document.createElement('input');
+            document.body.appendChild(tempInput);
+            tempInput.value = resultText;
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            alert('Result copied to clipboard!');
+        }
+
+        function printResult() {
+            const printContents = document.getElementById('result').innerText;
+            const originalContents = document.body.innerHTML;
+            document.body.innerHTML = '<pre>' + printContents + '</pre>';
+            window.print();
+            document.body.innerHTML = originalContents;
+            location.reload();
+        }
+    </script>
+</body>
+</html>
