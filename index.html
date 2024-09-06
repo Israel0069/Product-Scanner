@@ -106,6 +106,42 @@
                 max-width: 100%;
             }
         }
+
+        /* Style for the receipt printout */
+        #receipt {
+            display: none;
+        }
+
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+
+            #receipt, #receipt * {
+                visibility: visible;
+            }
+
+            #receipt {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                padding: 20px;
+                text-align: left;
+                border: none;
+                box-shadow: none;
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 20px;
+            }
+
+            table, th, td {
+                border: none;
+            }
+        }
     </style>
 </head>
 <body>
@@ -119,7 +155,7 @@
                 <h4>SCAN RESULT</h4>
                 <div id="result">Result Here</div>
                 <button onclick="copyToClipboard()">Copy to Clipboard</button>
-                <button onclick="printResult()">Print Result</button>
+                <button onclick="printReceipt()">Print Receipt</button>
                 <h4>Total Price</h4>
                 <div id="total-price">0.00</div>
             </div>
@@ -142,6 +178,23 @@
         </form>
 
         <button onclick="location.reload();">Reset</button>
+    </div>
+
+    <!-- Receipt Section -->
+    <div id="receipt">
+        <h2>Receipt</h2>
+        <table id="receipt-table">
+            <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Products will be inserted here for printing -->
+            </tbody>
+        </table>
+        <h3>Total: ₱<span id="receipt-total-price">0.00</span></h3>
     </div>
 
     <script type="text/javascript">
@@ -208,13 +261,21 @@
             alert('Result and total price copied to clipboard!');
         }
 
-        function printResult() {
-            const printContents = document.getElementById('product-table').outerHTML;
-            const originalContents = document.body.innerHTML;
-            document.body.innerHTML = printContents;
+        function printReceipt() {
+            // Copy the scanned products to the receipt section
+            const receiptTable = document.querySelector('#receipt-table tbody');
+            receiptTable.innerHTML = ''; // Clear previous content
+            scannedProducts.forEach(product => {
+                const newRow = document.createElement('tr');
+                newRow.innerHTML = `<td>${product.product_name}</td><td>₱${parseFloat(product.price).toFixed(2)}</td>`;
+                receiptTable.appendChild(newRow);
+            });
+
+            // Update the total price in the receipt
+            document.getElementById('receipt-total-price').innerText = totalPrice.toFixed(2);
+
+            // Trigger the print
             window.print();
-            document.body.innerHTML = originalContents;
-            location.reload();
         }
 
         // Function for voice feedback
