@@ -122,14 +122,15 @@
         let totalPrice = 0;
 
         function onScanSuccess(qrCodeMessage) {
-            // Assume QR code contains product_name, store_name, and price in JSON format
+            // Parse the QR code message, expecting the following structure:
+            // {"product_id":1,"product_name":"MaisBerna","price":"10","category":"corn","description":"asad","stock_quantity":"100"}
             try {
                 const qrData = JSON.parse(qrCodeMessage);
-                const { product_name, store_name, price } = qrData;
+                const { product_name, price } = qrData;
 
                 totalPrice += parseFloat(price);
                 document.getElementById('result').innerHTML = `
-                    <span class="result">Product: ${product_name}<br>Store: ${store_name}<br>Price: ₱${price.toFixed(2)}</span>`;
+                    <span class="result">Product: ${product_name}<br>Price: ₱${parseFloat(price).toFixed(2)}</span>`;
                 document.getElementById('total-price').innerText = `₱${totalPrice.toFixed(2)}`;
             } catch (error) {
                 document.getElementById('result').innerHTML = `<span class="result">Invalid QR Code Data</span>`;
