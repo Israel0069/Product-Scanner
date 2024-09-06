@@ -274,8 +274,14 @@
             // Update the total price in the receipt
             document.getElementById('receipt-total-price').innerText = totalPrice.toFixed(2);
 
+            // Show the receipt section
+            document.getElementById('receipt').style.display = 'block';
+
             // Trigger the print
             window.print();
+
+            // Hide the receipt section after printing
+            document.getElementById('receipt').style.display = 'none';
         }
 
         // Function for voice feedback
