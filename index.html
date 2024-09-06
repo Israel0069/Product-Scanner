@@ -69,6 +69,21 @@
             margin-top: 10px;
         }
 
+        table {
+            width: 100%;
+            margin-bottom: 20px;
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+
         button {
             padding: 10px 20px;
             border: none;
@@ -84,12 +99,6 @@
 
         button:hover {
             background-color: #008000;
-        }
-
-        video {
-            width: 100%;
-            border-radius: 8px;
-            border: 1.5px solid #b2b2b2;
         }
 
         @media (max-width: 600px) {
@@ -115,6 +124,23 @@
                 <div id="total-price">0.00</div>
             </div>
         </div>
+
+        <!-- Form to display scanned products -->
+        <form id="scanned-products-form">
+            <table id="product-table">
+                <thead>
+                    <tr>
+                        <th>Product Name</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Products will be appended here -->
+                </tbody>
+            </table>
+            <input type="text" id="total-price-input" readonly value="Total Price: ₱0.00">
+        </form>
+
         <button onclick="location.reload();">Reset</button>
     </div>
 
@@ -132,11 +158,17 @@
                 const { product_name, price } = qrData;
 
                 totalPrice += parseFloat(price);
-                scannedProducts.push({ product_name, price }); // Add to the scanned products list
+                scannedProducts.push({ product_name, price });
 
-                document.getElementById('result').innerHTML = `
-                    <span class="result">Product: ${product_name}<br>Price: ₱${parseFloat(price).toFixed(2)}</span>`;
+                // Add product to the table
+                const productTable = document.querySelector('#product-table tbody');
+                const newRow = document.createElement('tr');
+                newRow.innerHTML = `<td>${product_name}</td><td>₱${parseFloat(price).toFixed(2)}</td>`;
+                productTable.appendChild(newRow);
+
+                // Update the total price
                 document.getElementById('total-price').innerText = `₱${totalPrice.toFixed(2)}`;
+                document.getElementById('total-price-input').value = `Total Price: ₱${totalPrice.toFixed(2)}`;
 
                 // Voice feedback
                 speak(`Scanned product: ${product_name}, Price: ₱${price}`);
@@ -177,9 +209,9 @@
         }
 
         function printResult() {
-            const printContents = document.getElementById('result').innerText;
+            const printContents = document.getElementById('product-table').outerHTML;
             const originalContents = document.body.innerHTML;
-            document.body.innerHTML = '<pre>' + printContents + '</pre>';
+            document.body.innerHTML = printContents;
             window.print();
             document.body.innerHTML = originalContents;
             location.reload();
