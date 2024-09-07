@@ -246,18 +246,20 @@
         html5QrcodeScanner.render(onScanSuccess, onScanError);
 
         function copyToClipboard() {
-            let resultText = "Scanned Products:\n";
+            let resultText = "";
             scannedProducts.forEach(product => {
                 resultText += `Product: ${product.product_name}, Price: ₱${parseFloat(product.price).toFixed(2)}\n`;
             });
-            resultText += `\nTotal Price: ₱${totalPrice.toFixed(2)}`;
+            resultText += `Total Price: ₱${totalPrice.toFixed(2)}`;
 
+            // Create a temporary input to copy text to clipboard
             const tempInput = document.createElement('input');
             document.body.appendChild(tempInput);
             tempInput.value = resultText;
             tempInput.select();
             document.execCommand('copy');
             document.body.removeChild(tempInput);
+
             alert('Result and total price copied to clipboard!');
         }
 
