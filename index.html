@@ -248,7 +248,7 @@
         function copyToClipboard() {
             let resultText = "";
             scannedProducts.forEach(product => {
-                resultText += `Product: ${product.product_name}, Price: ₱${parseFloat(product.price).toFixed(2)}\n`;
+                 resultText += `Product: ${product.product_name}, Price: ₱${parseFloat(product.price).toFixed(2)}\n\n`; // Adding an extra newline
             });
            
 
