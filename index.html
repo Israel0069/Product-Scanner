@@ -154,7 +154,7 @@
             <div class="col">
                 <h4>SCAN RESULT</h4>
                 <div id="result">Result Here</div>
-                <button onclick="copyToClipboard()">Copy Proceed</button>
+                <button onclick="copyToClipboard()">Proceed</button>
                 <button onclick="printReceipt()">Print Receipt</button>
                 <button onclick="downloadProductList()">Download</button>
                 <h4>Total Price</h4>
@@ -183,7 +183,7 @@
 
     <!-- Receipt Section -->
     <div id="receipt">
-        <h2>Receipt</h2>
+        <h2>Order</h2>
         <table id="receipt-table">
             <thead>
                 <tr>
@@ -234,7 +234,7 @@
             // 3-second delay
             setTimeout(() => {
                 isProcessing = false;
-            }, 3000);
+            }, 3500);
         }
 
         function onScanError(errorMessage) {
