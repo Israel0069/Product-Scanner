@@ -262,6 +262,14 @@
             document.body.removeChild(tempInput);
 
             alert('Result and total price copied to clipboard!');
+		// After copying, delay for 2 seconds and then redirect or close
+    setTimeout(() => {
+        if (window.history.length > 1) {
+            window.history.back(); // Go back to the previous page if there is history
+        } else {
+            window.close(); // Close the window if no history is available
+        }
+    }, 2000); // 2-second delay
         }
 
         function printReceipt() {
